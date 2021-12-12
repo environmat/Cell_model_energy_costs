@@ -10,3 +10,5 @@ It includes the tools for the analysis of a:
 cell. 
 
 It aims to give an *initial indication* of what is possible, what could be achieved and the related costs based on only the raw materials. There are no processing costs included for the manufacturing of the batteries. 
+
+The `cell_model` file includes all classes and functions needed. The `example_cellmodel_v001` file gives an indication on how to use the classes and functions for the different cell formats. 
