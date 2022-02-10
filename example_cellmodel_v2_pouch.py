@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 31 13:02:47 2021
-
-@author: matze
-"""
-
 import cell_model_v004 as Cellmodel
 # Active materials
 NMC_cathode = Cellmodel.Activematerial_cathode("NMC811" , 195, 3.86)

@@ -1,15 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 31 13:02:47 2021
-
-@author: matze
-"""
-
 import cell_model_v004 as Cellmodel
 # Active materials
 NMC_cathode = Cellmodel.Activematerial_cathode("NMC811" , 195, 3.86)
-LFP_cathode = Cellmodel.Activematerial_cathode("LFP", 170, 3.3)
+LFP_cathode = Cellmodel.Activematerial_cathode("LFP", 160, 3.3)
 Gr = Cellmodel.Activematerial_anode("Gr", 344 , 0.17)
 
 # Currentcollectors 
@@ -23,11 +15,14 @@ LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC", 1.1)
 Separator_standard = Cellmodel.Separator("PP+Al" , 12e-4 , 0.44 , 1.18)
 
 # Electrods 
-positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name , 3.3 , 0.95 , 3.4, NMC_cathode) # NMC = 3.4 / LFP = 2.5
+# positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name , 3.3 , 0.95 , 3.4, NMC_cathode) # NMC = 3.4 / LFP = 2.5
+positive = Cellmodel.Electrodecomposition_cathode_opt1( LFP_cathode.name , 3.3 , 0.95 , 2.5, LFP_cathode) # NMC = 3.4 / LFP = 2.5
 negative = Cellmodel.Electrodecomposition_anode_opt1( Gr.name , 3.3*1.1 , 0.965 , 1.6, Gr)
 
 ### Total cells
-test_cell = Cellmodel.Cylindrical("NMC-Gr_Cyl", positive, negative, Separator_standard , LP40_standard, 
+# test_cell = Cellmodel.Cylindrical("NMC-Gr_Cyl", positive, negative, Separator_standard , LP40_standard, 
+                              # 1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
+test_cell = Cellmodel.Cylindrical("LFP-Gr_Cyl", positive, negative, Separator_standard , LP40_standard, 
                               1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
 
  
@@ -49,13 +44,23 @@ Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
 Ni, Co, Mn, Li, Al = Cellmodel.getMass_elements_cyl_c(positive, Al, NMC_cathode, test_cell)
 Gr, Cu, Binder_a = Cellmodel.getMass_elements_cyl_a(negative, Cu, test_cell) 
 
+## Specific Lithium costs and processing
+Pro_fac = 5.3 # CellEst
+Li_CO3 = 53500 # $/mt https://www.spglobal.com/platts/en/market-insights/latest-news/metals/020322-chinese-lithium-carbonate-hydroxide-price-spread-at-record-high
+LiOH = 47000 # $/mt
+
+Li_CO3_kg = Li_CO3/1000
+LiOH_kg = LiOH/1000
+
+Li_LFP = Li_CO3_kg * Pro_fac
+Li_NMC = LiOH_kg * Pro_fac
 
 #### Material Costs
 ### Cylindrical 
 # # Costs Cylindrical
 Ni_costs, Co_costs, Mn_costs, Li_costs, Al_costs, Al_cc_costs, Gr_costs, Cu_costs, \
     Binder_costs, Elyte_costs, Separator_costs, Housing_costs, Conductive_costs = \
-    Cellmodel.getCosts_cyl(16, 51, 2, 45, 2, 6, 12, 9, 10, 15, 80, 2, 7)
+    Cellmodel.getCosts_cyl(16, 51, 2, Li_LFP, 2, 6, 12, 9, 10, 15, 80, 2, 7)
 CAM_Metal_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs# $ 
 CAM_Metal_costs_kg = CAM_Metal_costs / (cathode_mass / 1000) # $ / kg 
 Material_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs + Al_cc_costs + Gr_costs + Cu_costs + Binder_costs + \
