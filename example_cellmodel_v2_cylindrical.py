@@ -45,7 +45,7 @@ Ni, Co, Mn, Li, Al = Cellmodel.getMass_elements_cyl_c(positive, Al, NMC_cathode,
 Gr, Cu, Binder_a = Cellmodel.getMass_elements_cyl_a(negative, Cu, test_cell) 
 
 ## Specific Lithium costs and processing
-Pro_fac = 5.3 # CellEst
+Pro_fac = 5.3 # CellEst Processing Factor Li_CO3
 Li_CO3 = 53500 # $/mt https://www.spglobal.com/platts/en/market-insights/latest-news/metals/020322-chinese-lithium-carbonate-hydroxide-price-spread-at-record-high
 LiOH = 47000 # $/mt
 
@@ -56,11 +56,26 @@ Li_LFP = Li_CO3_kg * Pro_fac
 Li_NMC = LiOH_kg * Pro_fac
 
 #### Material Costs
+Ni_raw = 16
+Co_raw = 51
+Mn_raw = 2
+Li_raw = Li_LFP 
+Al_raw = 2
+Al_cc_raw = 6
+Gr_raw = 12
+Cu_raw = 9
+Binder_raw = 10 
+Elyte_raw = 15
+Separator_raw = 80
+Steel_raw = 2
+Conductive_raw = 7
+
 ### Cylindrical 
 # # Costs Cylindrical
 Ni_costs, Co_costs, Mn_costs, Li_costs, Al_costs, Al_cc_costs, Gr_costs, Cu_costs, \
     Binder_costs, Elyte_costs, Separator_costs, Housing_costs, Conductive_costs = \
-    Cellmodel.getCosts_cyl(16, 51, 2, Li_LFP, 2, 6, 12, 9, 10, 15, 80, 2, 7)
+    Cellmodel.getCosts_cyl(Ni_raw, Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, \
+                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw)
 CAM_Metal_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs# $ 
 CAM_Metal_costs_kg = CAM_Metal_costs / (cathode_mass / 1000) # $ / kg 
 Material_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs + Al_cc_costs + Gr_costs + Cu_costs + Binder_costs + \
