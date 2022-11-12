@@ -531,6 +531,19 @@ def getMass_elements_cyl_a(Electrodecomposition_anode_opt1, CurrentCollector_ano
     return getMass_elements_cyl_a.Gr_mass, getMass_elements_cyl_a.cc_a_mass, \
            getMass_elements_cyl_a.binder_mass_a
 
+def getMass_elements_cyl_elyte(Electrolyte, Cylindrical):
+    #
+    getMass_electrolyte.mass_elyte = Electrolyte.density_elyte * Cylindrical.ecap_ratio * Cylindrical.capacity
+    if Electrolyte.salt == "LiPF6":
+        Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6
+        getMass_elements_cyl_elyte.Li_mass = Electrolyte.concentration * getMass_electrolyte.mass_elyte * Li_mass_content_LiPF6
+    elif Electrolyte.salt == "LLZO":
+        Li_mass_content_LLZO = 0.0579  # 5.79 weight% of Li content in LLZO
+        getMass_elements_cyl_elyte.Li_mass = Electrolyte.concentration * getMass_electrolyte.mass_elyte * Li_mass_content_LLZO
+    else:
+        getMass_elements_cyl_elyte.Li_mass = 1
+    return getMass_elements_cyl_elyte.Li_mass
+
 #######################
 #######################
 # Get costs for all components Cylindrical

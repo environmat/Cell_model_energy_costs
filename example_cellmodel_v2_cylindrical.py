@@ -42,7 +42,8 @@ Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
 ### Materials
 ## Cylindrical
 Ni, Co, Mn, Li, Al = Cellmodel.getMass_elements_cyl_c(positive, Al, NMC_cathode, test_cell)
-Gr, Cu, Binder_a = Cellmodel.getMass_elements_cyl_a(negative, Cu, test_cell) 
+Gr, Cu, Binder_a = Cellmodel.getMass_elements_cyl_a(negative, Cu, test_cell)
+Li_elyte = Cellmodel.getMass_elements_cyl_elyte(LP40_standard, test_cell)
 
 ## Specific Lithium costs and processing
 Pro_fac = 5.3 # CellEst Processing Factor Li_CO3
@@ -98,3 +99,4 @@ print("Energy [Wh/kg]: ", round(test_cell.energy / (cellmass/1000),2))
 print("CAM Metal costs [EUR/kWh]: ", round(CAM_Metal_costs / (test_cell.energy /1000),2))
 print("AAM Metal costs [EUR/kWh]: ", round(Gr_costs / (test_cell.energy /1000),2))
 print("Total Material costs [EUR/kWh]: ", round(Material_costs / (test_cell.energy /1000),2))
+print("Li content in Electrolyte [g]:", round((Li_elyte),2))
