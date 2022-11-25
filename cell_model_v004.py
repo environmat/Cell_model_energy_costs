@@ -132,17 +132,18 @@ class Separator:
         self.density_sep = density_sep 
 
 class Electrolyte: 
-    def __init__(self, salt, solvent, concentration):
+    def __init__(self, salt, solvent, concentration, molarmass_salt):
         self.salt = salt
         self.solvent = solvent
         self.concentration = concentration
+        self.molarmass_salt = molarmass_salt
     @property
     def saltmassfrac(self):
         self._saltmassfrac = 0.1222 * self.concentration
         return self._saltmassfrac
     @property
     def density_elyte(self):
-        self._density_elyte = 0.7641*self.saltmassfrac+1.1299
+        self._density_elyte = 0.7641*self.saltmassfrac+1.1299 # 1.1299 == density EC:DEC g cm-3
         return self._density_elyte
 
 ## Pouch ##
@@ -318,7 +319,9 @@ def getMass_jr_cyl(Electrodecomposition_cathode_opt1, Electrodecomposition_anode
 
 def getMass_electrolyte(Electrolyte, Cylindrical):
     getMass_electrolyte.mass_elyte = Electrolyte.density_elyte * Cylindrical.ecap_ratio * Cylindrical.capacity
-    return getMass_electrolyte.mass_elyte
+    getMass_electrolyte.mass_elyte_salt = Electrolyte.molarmass_salt * (Cylindrical.ecap_ratio/1000) * Cylindrical.capacity * Electrolyte.concentration
+                                        # (g/mol)*(mL/Ah)*(Ah)*(mol/L)
+    return getMass_electrolyte.mass_elyte, getMass_electrolyte.mass_elyte_salt
 
 def getMass_cylindrical_housing(Cylindrical): 
     vol_cylindrical_housing = (math.pi * (Cylindrical.diameter / 2)**2 - math.pi * ((Cylindrical.diameter - 
@@ -535,8 +538,8 @@ def getMass_elements_cyl_elyte(Electrolyte, Separator, Cylindrical):
     #
     getMass_electrolyte.mass_elyte = Electrolyte.density_elyte * Cylindrical.ecap_ratio * Cylindrical.capacity
     if Electrolyte.salt == "LiPF6":
-        Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6
-        getMass_elements_cyl_elyte.Li_mass = Electrolyte.concentration * getMass_electrolyte.mass_elyte * Li_mass_content_LiPF6
+        Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6 / concentration in mol L-1
+        getMass_elements_cyl_elyte.Li_mass = getMass_electrolyte.mass_elyte_salt * Li_mass_content_LiPF6
     elif Electrolyte.salt == "LLZO":
         getMass_separator.mass_sep = Separator.thickness_sep * Separator.density_sep  # g / cm2
         Li_mass_content_LLZO = 0.0579  # 5.79 weight% of Li content in LLZO

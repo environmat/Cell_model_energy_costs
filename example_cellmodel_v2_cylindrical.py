@@ -9,7 +9,10 @@ Al = Cellmodel.CurrentCollector_cathode("Al", 14e-4 , 2.76)
 Cu = Cellmodel.CurrentCollector_anode("Cu", 8e-4 , 8.96)
 
 # Electrolyte 
-LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC", 1.1)
+LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC",
+                                      1.1, # concentration mol / L
+                                      151.9 # MolarMass LiPF6
+                                      )
 
 # Separator
 Separator_standard = Cellmodel.Separator("PP+Al" , 12e-4 , 0.44 , 1.18)
