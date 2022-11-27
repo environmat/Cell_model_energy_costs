@@ -18,15 +18,15 @@ LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC",
 Separator_standard = Cellmodel.Separator("PP+Al" , 12e-4 , 0.44 , 1.18)
 
 # Electrods 
-# positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name , 3.3 , 0.95 , 3.4, NMC_cathode) # NMC = 3.4 / LFP = 2.5
-positive = Cellmodel.Electrodecomposition_cathode_opt1( LFP_cathode.name , 3.3 , 0.95 , 2.5, LFP_cathode) # NMC = 3.4 / LFP = 2.5
+positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name , 3.3 , 0.95 , 3.4, NMC_cathode) # NMC = 3.4 / LFP = 2.5
+#positive = Cellmodel.Electrodecomposition_cathode_opt1( LFP_cathode.name , 3.3 , 0.95 , 2.5, LFP_cathode) # NMC = 3.4 / LFP = 2.5
 negative = Cellmodel.Electrodecomposition_anode_opt1( Gr.name , 3.3*1.1 , 0.965 , 1.6, Gr)
 
 ### Total cells
-# test_cell = Cellmodel.Cylindrical("NMC-Gr_Cyl", positive, negative, Separator_standard , LP40_standard, 
-                              # 1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
-test_cell = Cellmodel.Cylindrical("LFP-Gr_Cyl", positive, negative, Separator_standard , LP40_standard, 
-                              1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
+test_cell = Cellmodel.Cylindrical("NMC-Gr_Cyl", positive, negative, Separator_standard , LP40_standard,
+                               1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
+# test_cell = Cellmodel.Cylindrical("LFP-Gr_Cyl", positive, negative, Separator_standard , LP40_standard,
+#                              1.7, 2.1, 7.0, 0.0165, 7.9, 0.25, 0.6, 4, 0.94, NMC_cathode, Gr, Al , Cu)
 
  
  
@@ -38,7 +38,7 @@ cellmass, Housing_mass = Cellmodel.getMass_cylindrical_total(positive, negative,
 cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * 2
 
 
-## Seperator and Elyte
+# Seperator and Elyte
 Separator_mass = Cellmodel.getMass_separator(Separator_standard)
 Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
 
@@ -103,3 +103,6 @@ print("CAM Metal costs [EUR/kWh]: ", round(CAM_Metal_costs / (test_cell.energy /
 print("AAM Metal costs [EUR/kWh]: ", round(Gr_costs / (test_cell.energy /1000),2))
 print("Total Material costs [EUR/kWh]: ", round(Material_costs / (test_cell.energy /1000),2))
 print("Li content in Electrolyte [g]:", round((Li_elyte),2))
+print("Li content in Cathode [g]: ", round(Li,2))
+print("Cell mass [g]: ", round(cellmass,2))
+print("Li share on total mass [%]: ", round(((Li+Li_elyte)/cellmass)*100,2))
