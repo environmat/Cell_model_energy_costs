@@ -1,4 +1,4 @@
-import cell_model_v004 as Cellmodel
+import cell_model as Cellmodel
 # Active materials
 NMC_cathode = Cellmodel.Activematerial_cathode("NMC811" , 195, 3.86)
 LFP_cathode = Cellmodel.Activematerial_cathode("LFP", 160, 3.3)
@@ -9,7 +9,7 @@ Al = Cellmodel.CurrentCollector_cathode("Al", 14e-4 , 2.76)
 Cu = Cellmodel.CurrentCollector_anode("Cu", 8e-4 , 8.96)
 
 # Electrolyte 
-LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC",
+LP40_standard = Cellmodel.Electrolyte_liquid("LiPF6" , "EC:DMC",
                                       1.1, # concentration mol / L
                                       151.9 # MolarMass LiPF6
                                       )
@@ -40,7 +40,7 @@ cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * 2
 
 # Seperator and Elyte
 Separator_mass = Cellmodel.getMass_separator(Separator_standard)
-Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
+Elyte_mass = Cellmodel.getMass_electrolyte_liquid(LP40_standard, test_cell)
 
 ### Materials
 ## Cylindrical
