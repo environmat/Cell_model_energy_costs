@@ -558,15 +558,15 @@ def getMass_elements_cyl_elyte(Electrolyte_liquid, Separator, Cylindrical):
         getMass_elements_cyl_elyte.Li_mass = 1
     return getMass_elements_cyl_elyte.Li_mass
 
-def getMass_elements_cyl_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode_opt1):
+def getMass_elements_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode_opt1):
     #
     mass_cathode = Electrodecomposition_cathode_opt1.areal_cap / Electrodecomposition_cathode_opt1.active_frac
     #
-    getMass_elements_cyl_elyte_solid.Li_mass_fraction_elyte = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el
-    getMass_elements_cyl_elyte_solid.Li_mass_abs = mass_cathode * Electrolyte_solid.pos_electrode_fraction * getMass_elements_cyl_elyte_solid.Li_mass_fraction_elyte
+    getMass_elements_elyte_solid.Li_mass_fraction_elyte = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el
+    getMass_elements_elyte_solid.Li_mass_abs = mass_cathode * Electrolyte_solid.pos_electrode_fraction * getMass_elements_elyte_solid.Li_mass_fraction_elyte
 
     # molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction
-    return getMass_elements_cyl_elyte_solid.Li_mass_abs
+    return getMass_elements_elyte_solid.Li_mass_abs
 
 #######################
 #######################
@@ -589,7 +589,7 @@ def getCosts_cyl(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, Cu_
     if Electrolyte_liquid.salt == "LiPF6" :
         Elyte_costs = getMass_electrolyte_liquid.mass_elyte/1000 * Elyte_raw
     else:
-        Elyte_costs = getMass_elements_cyl_elyte_solid.Li_mass_abs/1000 * Li_raw
+        Elyte_costs = getMass_elements_elyte_solid.Li_mass_abs/1000 * Li_raw
     # Separator
     Separator_costs = getMass_elements_cyl_c.Separator_mass/1000 * Separator_raw
     # Housing
@@ -699,11 +699,26 @@ def getMass_elements_pouch_a(Electrodecomposition_anode_opt1, CurrentCollector_a
     return getMass_elements_pouch_a.Gr_mass, getMass_elements_pouch_a.cc_a_mass, \
            getMass_elements_pouch_a.binder_mass_a
 
+def getMass_elements_pouch_elyte(Electrolyte_liquid, Separator, Pouch):
+    #
+    getMass_electrolyte_liquid.mass_elyte = Electrolyte_liquid.density_elyte * Pouch.ecap_ratio * Pouch.capacity
+    if Electrolyte_liquid.salt == "LiPF6":
+        Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6 / concentration in mol L-1
+        getMass_elements_cyl_elyte.Li_mass = getMass_electrolyte_liquid.mass_elyte_salt * Li_mass_content_LiPF6
+    # elif Electrolyte.salt == "LLZO":
+    #     getMass_separator.mass_sep = Separator.thickness_sep * Separator.density_sep  # g / cm2
+    #     Li_mass_content_LLZO = 0.0579  # 5.79 weight% of Li content in LLZO
+    #     getMass_elements_cyl_elyte.Li_mass = (Electrolyte.concentration * getMass_electrolyte.mass_elyte + getMass_separator.mass_sep) \
+    #                                          * Li_mass_content_LLZO
+    else:
+        getMass_elements_cyl_elyte.Li_mass = 1
+    return getMass_elements_cyl_elyte.Li_mass
+
 #######################
 #######################
 # Get costs for all components Pouch
 def getCosts_pouch(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, Cu_raw, \
-                 Binder_raw, Elyte_raw, Separator_raw, Pouch_packaging_raw, Conductive_raw):
+                 Binder_raw, Elyte_raw, Separator_raw, Pouch_packaging_raw, Conductive_raw, Electrolyte_liquid):
     # Cathode
     Ni_costs = getMass_elements_pouch_c.Ni_mass/1000 * Ni_raw # gram / 1000 * $ / kg = $ 
     Co_costs = getMass_elements_pouch_c.Co_mass/1000 * Co_raw
@@ -717,7 +732,10 @@ def getCosts_pouch(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, C
     # Binder for both
     Binder_costs = (getMass_elements_pouch_c.binder_mass_c + getMass_elements_pouch_a.binder_mass_a)/1000 * Binder_raw
     # Electrolyte
-    Elyte_costs = getMass_electrolyte.mass_elyte/1000 * Elyte_raw
+    if Electrolyte_liquid.salt == "LiPF6":
+        Elyte_costs = getMass_electrolyte_liquid.mass_elyte / 1000 * Elyte_raw
+    else:
+        Elyte_costs = getMass_elements_elyte_solid.Li_mass_abs / 1000 * Li_raw
     # Separator
     Separator_costs = getMass_elements_pouch_c.Separator_mass/1000 * Separator_raw
     # Housing
@@ -795,7 +813,7 @@ def getMass_elements_prismatic_c(Electrodecomposition_cathode_opt1, CurrentColle
            getMass_elements_prismatic_c.Al_mass
 
 # individual cell chemistries
-def getMass_elements_prismatic_c_spec(Electrodecomposition_cathode_opt1, CurrentCollector_cathode, Activematerial_cathode, Pouch,\
+def getMass_elements_prismatic_c_spec(Electrodecomposition_cathode_opt1, CurrentCollector_cathode, Activematerial_cathode, Prismatic,\
                                 Ni_content, Co_content, Mn_content, Li_content, Al_content, Active_material_share, Binder_share, Conductive_material_share):
     #
     mass_cathode = Electrodecomposition_cathode_opt1.active_load / Electrodecomposition_cathode_opt1.active_frac
@@ -815,16 +833,20 @@ def getMass_elements_prismatic_c_spec(Electrodecomposition_cathode_opt1, Current
            getMass_elements_prismatic_c_spec.Mn_mass, getMass_elements_prismatic_c_spec.Li_mass, \
            getMass_elements_prismatic_c_spec.Al_mass
 
-def getMass_elements_prismatic_a(Electrodecomposition_anode_opt1, CurrentCollector_anode, Pouch): 
+def getMass_elements_pristmatic_elyte(Electrolyte_liquid, Separator, Prismatic):
     #
-    mass_anode = Electrodecomposition_anode_opt1.active_load / Electrodecomposition_anode_opt1.active_frac
-    mass_cc_a = CurrentCollector_anode.mass_cc_a
-    # Graphite
-    getMass_elements_prismatic_a.Gr_mass = (2 * mass_anode * Pouch.jr_area) * Electrodecomposition_anode_opt1.active_frac
-    getMass_elements_prismatic_a.cc_a_mass = mass_cc_a * Pouch.jr_area
-    getMass_elements_prismatic_a.binder_mass_a = (2 * mass_anode * Pouch.jr_area) * 0.03 # 3% of total share
-    return getMass_elements_prismatic_a.Gr_mass, getMass_elements_prismatic_a.cc_a_mass, \
-           getMass_elements_prismatic_a.binder_mass_a
+    getMass_electrolyte_liquid.mass_elyte = Electrolyte_liquid.density_elyte * Prismatic.ecap_ratio * Prismatic.capacity
+    if Electrolyte_liquid.salt == "LiPF6":
+        Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6 / concentration in mol L-1
+        getMass_elements_cyl_elyte.Li_mass = getMass_electrolyte_liquid.mass_elyte_salt * Li_mass_content_LiPF6
+    # elif Electrolyte.salt == "LLZO":
+    #     getMass_separator.mass_sep = Separator.thickness_sep * Separator.density_sep  # g / cm2
+    #     Li_mass_content_LLZO = 0.0579  # 5.79 weight% of Li content in LLZO
+    #     getMass_elements_cyl_elyte.Li_mass = (Electrolyte.concentration * getMass_electrolyte.mass_elyte + getMass_separator.mass_sep) \
+    #                                          * Li_mass_content_LLZO
+    else:
+        getMass_elements_cyl_elyte.Li_mass = 1
+    return getMass_elements_cyl_elyte.Li_mass
 
 #######################
 #######################
@@ -844,7 +866,10 @@ def getCosts_prismatic(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_ra
     # Binder for both
     Binder_costs = (getMass_elements_prismatic_c.binder_mass_c + getMass_elements_prismatic_a.binder_mass_a)/1000 * Binder_raw
     # Electrolyte
-    Elyte_costs = getMass_electrolyte.mass_elyte/1000 * Elyte_raw
+    if Electrolyte_liquid.salt == "LiPF6":
+        Elyte_costs = getMass_electrolyte_liquid.mass_elyte / 1000 * Elyte_raw
+    else:
+        Elyte_costs = getMass_elements_elyte_solid.Li_mass_abs / 1000 * Li_raw
     # Separator
     Separator_costs = getMass_elements_prismatic_c.Separator_mass/1000 * Separator_raw
     # Housing

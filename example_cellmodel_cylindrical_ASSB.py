@@ -29,7 +29,7 @@ positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name ,
                                                         NMC_cathode) # NMC = 3.4 / LFP = 2.5
 #positive = Cellmodel.Electrodecomposition_cathode_opt1( LFP_cathode.name , 3.3 , 0.95 , 2.5, LFP_cathode) # NMC = 3.4 / LFP = 2.5
 negative = Cellmodel.Electrodecomposition_anode_opt1( LiM.name ,
-                                                      3.3*1.1 , # areal capacity
+                                                      10.3 , # areal capacity, from M. Lacey: 50 µm Li ~= 10.3 mAh/cm2
                                                       1.0 , # acive material fraction
                                                       0.534, # density
                                                       LiM)
@@ -69,7 +69,7 @@ cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * 2
 
 # Seperator and Elyte
 Separator_mass = Cellmodel.getMass_separator(Separator_LLZO)
-Li_abs_elyte = Cellmodel.getMass_elements_cyl_elyte_solid(LLZO_elyte, positive)
+Li_abs_elyte = Cellmodel.getMass_elements_elyte_solid(LLZO_elyte, positive)
 
 ### Materials
 ## Cylindrical
