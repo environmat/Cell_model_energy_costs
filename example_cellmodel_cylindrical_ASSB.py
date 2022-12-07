@@ -9,23 +9,33 @@ Al = Cellmodel.CurrentCollector_cathode("Al", 14e-4 , 2.76)
 Cu = Cellmodel.CurrentCollector_anode("Cu", 8e-4 , 8.96)
 
 # Electrolyte 
-LLZO_elyte = Cellmodel.Electrolyte_solid("LLZO" ,
-                                    838.5, # molarmass electrolyte
-                                    6.94, # molarmass Li
-                                    7, # index Li in LLZO
-                                    0.3 # fraction of SE in pos electrode
-                                      )
+LLZO_elyte = Cellmodel.Electrolyte_solid("LLZO",
+                                         838.5, # molarmass electrolyte
+                                         6.94, # molarmass
+                                         7, # index Li in LLZO
+                                         0.2, # fraction of SE in pos electrode
+                                         5.1 # density in g cm-3
+                                        )
+Elyte_liquid = Cellmodel.Electrolyte_liquid("","",0,0)
 
 # Separator
 Separator_LLZO = Cellmodel.Separator("LLZO", 50e-4, 0.6, 5.1) #60% porosity assumption
 
 # Electrods 
-positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name , 3.3 , 0.95 , 3.4, NMC_cathode) # NMC = 3.4 / LFP = 2.5
+positive = Cellmodel.Electrodecomposition_cathode_opt1( NMC_cathode.name ,
+                                                        3.3 , # areal capacity
+                                                        0.75 , # active material fraction
+                                                        3.4, # density CAM
+                                                        NMC_cathode) # NMC = 3.4 / LFP = 2.5
 #positive = Cellmodel.Electrodecomposition_cathode_opt1( LFP_cathode.name , 3.3 , 0.95 , 2.5, LFP_cathode) # NMC = 3.4 / LFP = 2.5
-negative = Cellmodel.Electrodecomposition_anode_opt1( Gr.name , 3.3*1.1 , 0.965 , 1.6, Gr)
+negative = Cellmodel.Electrodecomposition_anode_opt1( LiM.name ,
+                                                      3.3*1.1 , # areal capacity
+                                                      1.0 , # acive material fraction
+                                                      0.534, # density
+                                                      LiM)
 
 ### Total cells
-test_cell = Cellmodel.Cylindrical("NMC-Gr_Cyl",
+test_cell = Cellmodel.Cylindrical("NMC-LiM-ASSB_Cyl",
                                   positive,
                                   negative,
                                   Separator_LLZO ,
@@ -58,14 +68,13 @@ cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * 2
 
 
 # Seperator and Elyte
-Separator_mass = Cellmodel.getMass_separator(Separator_standard)
-Elyte_mass = Cellmodel.getMass_electrolyte_liquid(LP40_standard, test_cell)
+Separator_mass = Cellmodel.getMass_separator(Separator_LLZO)
+Li_abs_elyte = Cellmodel.getMass_elements_cyl_elyte_solid(LLZO_elyte, positive)
 
 ### Materials
 ## Cylindrical
 Ni, Co, Mn, Li, Al = Cellmodel.getMass_elements_cyl_c(positive, Al, NMC_cathode, test_cell)
 Gr, Cu, Binder_a = Cellmodel.getMass_elements_cyl_a(negative, Cu, test_cell)
-Li_elyte = Cellmodel.getMass_elements_cyl_elyte(LP40_standard, Separator_standard, test_cell)
 
 ## Specific Lithium costs and processing
 Pro_fac = 5.3 # CellEst Processing Factor Li_CO3
@@ -98,7 +107,7 @@ Conductive_raw = 7
 Ni_costs, Co_costs, Mn_costs, Li_costs, Al_costs, Al_cc_costs, Gr_costs, Cu_costs, \
     Binder_costs, Elyte_costs, Separator_costs, Housing_costs, Conductive_costs = \
     Cellmodel.getCosts_cyl(Ni_raw, Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, \
-                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw)
+                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw, Elyte_liquid)
 CAM_Metal_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs# $ 
 CAM_Metal_costs_kg = CAM_Metal_costs / (cathode_mass / 1000) # $ / kg 
 Material_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs + Al_cc_costs + Gr_costs + Cu_costs + Binder_costs + \
@@ -121,7 +130,7 @@ print("Energy [Wh/kg]: ", round(test_cell.energy / (cellmass/1000),2))
 print("CAM Metal costs [EUR/kWh]: ", round(CAM_Metal_costs / (test_cell.energy /1000),2))
 print("AAM Metal costs [EUR/kWh]: ", round(Gr_costs / (test_cell.energy /1000),2))
 print("Total Material costs [EUR/kWh]: ", round(Material_costs / (test_cell.energy /1000),2))
-print("Li content in Electrolyte [g]:", round((Li_elyte),2))
+print("Li content in Electrolyte [g]:", round((Li_abs_elyte),2))
 print("Li content in Cathode [g]: ", round(Li,2))
 print("Cell mass [g]: ", round(cellmass,2))
-print("Li share on total mass [%]: ", round(((Li+Li_elyte)/cellmass)*100,2))
+print("Li share on total mass [%]: ", round(((Li + Li_abs_elyte)/cellmass)*100,2))

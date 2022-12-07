@@ -147,12 +147,13 @@ class Electrolyte_liquid:
         return self._density_elyte
 
 class Electrolyte_solid:
-    def __int__(self, name, molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction):
-        self.name = name
+    def __init__(self, name_elyte, molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction, density_elyte):
+        self.name = name_elyte
         self.molarmass_el = molarmass_el # molarmass in g/mol
         self.molarmass_Li = molarmass_Li # molarmass in g/mol
         self.index_Li = index_Li # index in SE formula of Li, x in i.e. Li_x La_y Zr_z O_w
         self.pos_electrode_fraction = pos_electrode_fraction # share of pos electrode
+        self.density_elyte = density_elyte # density in g cm-3
 
 ## Pouch ##
 ## ============================================================================
@@ -557,21 +558,21 @@ def getMass_elements_cyl_elyte(Electrolyte_liquid, Separator, Cylindrical):
         getMass_elements_cyl_elyte.Li_mass = 1
     return getMass_elements_cyl_elyte.Li_mass
 
-def getMass_elements_cyl_elyte_solid(Electrolyte_solid, Separator, Electrodecomposition_cathode_opt1, Cylindrical):
+def getMass_elements_cyl_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode_opt1):
     #
-    mass_cathode = Electrodecomposition_cathode_opt1.active_load / Electrodecomposition_cathode_opt1.active_frac
+    mass_cathode = Electrodecomposition_cathode_opt1.areal_cap / Electrodecomposition_cathode_opt1.active_frac
     #
     getMass_elements_cyl_elyte_solid.Li_mass_fraction_elyte = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el
     getMass_elements_cyl_elyte_solid.Li_mass_abs = mass_cathode * Electrolyte_solid.pos_electrode_fraction * getMass_elements_cyl_elyte_solid.Li_mass_fraction_elyte
 
     # molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction
-    return getMass_elements_cyl_elyte.Li_mass_abs
+    return getMass_elements_cyl_elyte_solid.Li_mass_abs
 
 #######################
 #######################
 # Get costs for all components Cylindrical
 def getCosts_cyl(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, Cu_raw, \
-                 Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw):
+                 Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw, Electrolyte_liquid):
     # Cathode
     Ni_costs = getMass_elements_cyl_c.Ni_mass/1000 * Ni_raw # gram / 1000 * $ / kg = $ 
     Co_costs = getMass_elements_cyl_c.Co_mass/1000 * Co_raw
@@ -585,7 +586,10 @@ def getCosts_cyl(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, Cu_
     # Binder for both
     Binder_costs = (getMass_elements_cyl_c.binder_mass_c + getMass_elements_cyl_a.binder_mass_a)/1000 * Binder_raw
     # Electrolyte
-    Elyte_costs = getMass_electrolyte_liquid.mass_elyte/1000 * Elyte_raw
+    if Electrolyte_liquid.salt == "LiPF6" :
+        Elyte_costs = getMass_electrolyte_liquid.mass_elyte/1000 * Elyte_raw
+    else:
+        Elyte_costs = getMass_elements_cyl_elyte_solid.Li_mass_abs/1000 * Li_raw
     # Separator
     Separator_costs = getMass_elements_cyl_c.Separator_mass/1000 * Separator_raw
     # Housing
