@@ -866,7 +866,7 @@ def getCosts_prismatic(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_ra
     # Binder for both
     Binder_costs = (getMass_elements_prismatic_c.binder_mass_c + getMass_elements_prismatic_a.binder_mass_a)/1000 * Binder_raw
     # Electrolyte
-    if Electrolyte_liquid.salt == "LiPF6":
+    if Electrolyte_liquid.salt == "LiPF6" or "LiTFSI":
         Elyte_costs = getMass_electrolyte_liquid.mass_elyte / 1000 * Elyte_raw
     else:
         Elyte_costs = getMass_elements_elyte_solid.Li_mass_abs / 1000 * Li_raw
