@@ -1,4 +1,4 @@
-import cell_model_v004 as Cellmodel
+import cell_model as Cellmodel
 # Active materials
 NMC_cathode = Cellmodel.Activematerial_cathode("NMC811" , 195, 3.86)
 # NMC_cathode = Cellmodel.Activematerial_cathode("NMC622" , 180, 3.86)
@@ -10,8 +10,10 @@ Al = Cellmodel.CurrentCollector_cathode("Al", 14e-4 , 2.76)
 Cu = Cellmodel.CurrentCollector_anode("Cu", 8e-4 , 8.96)
 
 # Electrolyte 
-LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC", 1.1)
-
+LP40_standard = Cellmodel.Electrolyte_liquid("LiPF6" , "EC:DMC",
+                                      1.1, # concentration mol / L
+                                      151.9 # MolarMass LiPF6
+                                      )
 # Separator
 Separator_standard = Cellmodel.Separator("PP+Al" , 12e-4 , 0.44 , 1.18)
 
@@ -38,7 +40,7 @@ cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * 2
 
 ## Seperator and Elyte
 Separator_mass = Cellmodel.getMass_separator(Separator_standard)
-Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
+Elyte_mass = Cellmodel.getMass_electrolyte_liquid(LP40_standard, test_cell)
 
 ### Materials
 ## Cylindrical
@@ -81,7 +83,7 @@ Conductive_raw = 7
 Ni_costs, Co_costs, Mn_costs, Li_costs, Al_costs, Al_cc_costs, Gr_costs, Cu_costs, \
     Binder_costs, Elyte_costs, Separator_costs, Housing_costs, Conductive_costs = \
     Cellmodel.getCosts_cyl(Ni_raw, Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, \
-                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw)
+                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Steel_raw, Conductive_raw, LP40_standard)
 CAM_Metal_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs# $ 
 CAM_Metal_costs_kg = CAM_Metal_costs / (cathode_mass / 1000) # $ / kg 
 Material_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs + Al_cc_costs + Gr_costs + Cu_costs + Binder_costs + \

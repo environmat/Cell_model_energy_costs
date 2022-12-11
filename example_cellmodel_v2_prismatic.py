@@ -1,4 +1,4 @@
-import cell_model_v004 as Cellmodel
+import cell_model as Cellmodel
 # Active materials
 NMC_cathode = Cellmodel.Activematerial_cathode("NMC811" , 195, 3.86)
 LFP_cathode = Cellmodel.Activematerial_cathode("LFP", 170, 3.3)
@@ -9,8 +9,10 @@ Al = Cellmodel.CurrentCollector_cathode("Al", 14e-4 , 2.76)
 Cu = Cellmodel.CurrentCollector_anode("Cu", 8e-4 , 8.96)
 
 # Electrolyte 
-LP40_standard = Cellmodel.Electrolyte("LiPF6" , "EC:DMC", 1.1)
-
+LP40_standard = Cellmodel.Electrolyte_liquid("LiPF6" , "EC:DMC",
+                                      1.1, # concentration mol / L
+                                      151.9 # MolarMass LiPF6
+                                      )
 # Separator
 Separator_standard = Cellmodel.Separator("PP+Al" , 12e-4 , 0.44 , 1.18)
 
@@ -33,19 +35,47 @@ cathode_mass = Cellmodel.getMass_cathode(positive) * test_cell.jr_area * test_ce
 
 ## Seperator and Elyte
 Separator_mass = Cellmodel.getMass_separator(Separator_standard)
-Elyte_mass = Cellmodel.getMass_electrolyte(LP40_standard, test_cell)
+Elyte_mass = Cellmodel.getMass_electrolyte_liquid(LP40_standard, test_cell)
 
 ### Materials
 ## Prismatic
 Ni, Co, Mn, Li, Al = Cellmodel.getMass_elements_prismatic_c(positive, Al, NMC_cathode, test_cell)
-Gr, Cu, Binder_a = Cellmodel.getMass_elements_prismatic_a(negative, Cu, test_cell) 
+Gr, Cu, Binder_a = Cellmodel.getMass_elements_prismatic_a(negative, Cu, test_cell)
 
+## Specific Lithium costs and processing
+Pro_fac = 5.3 # CellEst Processing Factor Li_CO3
+Li_CO3 = 53500 # $/mt https://www.spglobal.com/platts/en/market-insights/latest-news/metals/020322-chinese-lithium-carbonate-hydroxide-price-spread-at-record-high
+LiOH = 47000 # $/mt
+
+Li_CO3_kg = Li_CO3/1000
+LiOH_kg = LiOH/1000
+
+Li_LFP = Li_CO3_kg * Pro_fac
+Li_NMC = LiOH_kg * Pro_fac
+
+
+#### Material Costs
+### Prismatic
+#### Material Costs
+Ni_raw = 16
+Co_raw = 51
+Mn_raw = 2
+Li_raw = Li_NMC
+Al_raw = 2
+Al_cc_raw = 6
+Gr_raw = 12
+Cu_raw = 9
+Binder_raw = 10
+Elyte_raw = 15
+Separator_raw = 80
+Conductive_raw = 7
 
 #### Material Costs
 ### Prismatic
 Ni_costs, Co_costs, Mn_costs, Li_costs, Al_costs, Al_cc_costs, Gr_costs, Cu_costs, \
     Binder_costs, Elyte_costs, Separator_costs, Housing_costs, Conductive_costs = \
-    Cellmodel.getCosts_prismatic(16, 51, 2, 45, 2, 6, 12, 9, 10, 15, 80, 2, 7)
+    Cellmodel.getCosts_prismatic(Ni_raw, Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, \
+                           Cu_raw, Binder_raw, Elyte_raw, Separator_raw, Al_raw, Conductive_raw, LP40_standard)
 CAM_Metal_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs# $ 
 CAM_Metal_costs_kg = CAM_Metal_costs / (cathode_mass / 1000) # $ / kg 
 Material_costs = Ni_costs + Co_costs + Mn_costs + Li_costs + Al_costs + Al_cc_costs + Gr_costs + Cu_costs + Binder_costs + \

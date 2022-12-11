@@ -833,6 +833,18 @@ def getMass_elements_prismatic_c_spec(Electrodecomposition_cathode_opt1, Current
            getMass_elements_prismatic_c_spec.Mn_mass, getMass_elements_prismatic_c_spec.Li_mass, \
            getMass_elements_prismatic_c_spec.Al_mass
 
+def getMass_elements_prismatic_a(Electrodecomposition_anode_opt1, CurrentCollector_anode, Prismatic):
+    #
+    mass_anode = Electrodecomposition_anode_opt1.active_load / Electrodecomposition_anode_opt1.active_frac
+    mass_cc_a = CurrentCollector_anode.mass_cc_a
+    # Graphite
+    getMass_elements_prismatic_a.Gr_mass = (2 * mass_anode * Prismatic.jr_area) * Electrodecomposition_anode_opt1.active_frac
+    getMass_elements_prismatic_a.cc_a_mass = mass_cc_a * Prismatic.jr_area
+    getMass_elements_prismatic_a.binder_mass_a = (2 * mass_anode * Prismatic.jr_area) * 0.03 # 3% of total share
+    return getMass_elements_prismatic_a.Gr_mass, getMass_elements_prismatic_a.cc_a_mass, \
+           getMass_elements_prismatic_a.binder_mass_a
+
+
 def getMass_elements_pristmatic_elyte(Electrolyte_liquid, Separator, Prismatic):
     #
     getMass_electrolyte_liquid.mass_elyte = Electrolyte_liquid.density_elyte * Prismatic.ecap_ratio * Prismatic.capacity
@@ -852,7 +864,7 @@ def getMass_elements_pristmatic_elyte(Electrolyte_liquid, Separator, Prismatic):
 #######################
 # Get costs for all components Pouch
 def getCosts_prismatic(Ni_raw , Co_raw, Mn_raw, Li_raw, Al_raw, Al_cc_raw, Gr_raw, Cu_raw, \
-                 Binder_raw, Elyte_raw, Separator_raw, Pouch_packaging_raw, Conductive_raw):
+                 Binder_raw, Elyte_raw, Separator_raw, Pouch_packaging_raw, Conductive_raw, Electrolyte_liquid):
     # Cathode
     Ni_costs = getMass_elements_prismatic_c.Ni_mass/1000 * Ni_raw # gram / 1000 * $ / kg = $ 
     Co_costs = getMass_elements_prismatic_c.Co_mass/1000 * Co_raw
