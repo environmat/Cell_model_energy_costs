@@ -568,6 +568,16 @@ def getMass_elements_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode
     # molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction
     return getMass_elements_elyte_solid.Li_mass_abs
 
+def getMass_electrolyte_solid(Electrolyte_solid, Electrodecomposition_cathode_opt1):
+    #
+    mass_cathode = Electrodecomposition_cathode_opt1.areal_cap / Electrodecomposition_cathode_opt1.active_frac
+    #
+    # getMass_elements_elyte_solid.Li_mass_fraction_elyte = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el
+    getMass_elements_elyte_solid.electrolyte_solid_mass = mass_cathode * Electrolyte_solid.pos_electrode_fraction
+
+    # molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction
+    return getMass_elements_elyte_solid.electrolyte_solid_mass
+
 def getMass_elements_cyl_separator_solid(Electrolyte_solid,Separator, Cylindrical):
     #
     if Electrolyte_solid.name == "LLZO":
