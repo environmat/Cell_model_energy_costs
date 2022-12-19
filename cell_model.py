@@ -570,7 +570,7 @@ def getMass_elements_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode
 
 def getMass_elements_cyl_separator_solid(Electrolyte_solid,Separator, Cylindrical):
     #
-    if Electrolyte_solid.salt == "LLZO":
+    if Electrolyte_solid.name == "LLZO":
         Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
         getMass_elements_cyl_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Cylindrical.jr_area * 1.05) * Li_mass_content_LLZO
     else:
@@ -720,7 +720,7 @@ def getMass_elements_pouch_elyte(Electrolyte_liquid, Separator, Pouch):
 
 def getMass_elements_pouch_separator_solid(Electrolyte_solid,Separator, Pouch):
     #
-    if Electrolyte_solid.salt == "LLZO":
+    if Electrolyte_solid.name == "LLZO":
         Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
         getMass_elements_pouch_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Pouch.jr_area * 1.05) * Li_mass_content_LLZO
     else:
@@ -875,7 +875,7 @@ def getMass_elements_pristmatic_elyte(Electrolyte_liquid, Separator, Prismatic):
 
 def getMass_elements_prismatic_separator_solid(Electrolyte_solid,Separator, Prismatic):
     #
-    if Electrolyte_solid.salt == "LLZO":
+    if Electrolyte_solid.name == "LLZO":
         Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
         getMass_elements_prismatic_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Prismatic.jr_area * 1.05) * Li_mass_content_LLZO
     else:
