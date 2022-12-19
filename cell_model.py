@@ -568,6 +568,15 @@ def getMass_elements_elyte_solid(Electrolyte_solid, Electrodecomposition_cathode
     # molarmass_el, molarmass_Li, index_Li, pos_electrode_fraction
     return getMass_elements_elyte_solid.Li_mass_abs
 
+def getMass_elements_cyl_separator_solid(Electrolyte_solid,Separator, Cylindrical):
+    #
+    if Electrolyte_solid.salt == "LLZO":
+        Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
+        getMass_elements_cyl_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Cylindrical.jr_area * 1.05) * Li_mass_content_LLZO
+    else:
+        getMass_elements_cyl_separator_solid.Li_mass = 1
+    return getMass_elements_cyl_separator_solid.Li_mass
+
 #######################
 #######################
 # Get costs for all components Cylindrical
@@ -705,14 +714,18 @@ def getMass_elements_pouch_elyte(Electrolyte_liquid, Separator, Pouch):
     if Electrolyte_liquid.salt == "LiPF6":
         Li_mass_content_LiPF6 = 0.0457 # 4.57 weight% of Li content in LiPF6 / concentration in mol L-1
         getMass_elements_cyl_elyte.Li_mass = getMass_electrolyte_liquid.mass_elyte_salt * Li_mass_content_LiPF6
-    # elif Electrolyte.salt == "LLZO":
-    #     getMass_separator.mass_sep = Separator.thickness_sep * Separator.density_sep  # g / cm2
-    #     Li_mass_content_LLZO = 0.0579  # 5.79 weight% of Li content in LLZO
-    #     getMass_elements_cyl_elyte.Li_mass = (Electrolyte.concentration * getMass_electrolyte.mass_elyte + getMass_separator.mass_sep) \
-    #                                          * Li_mass_content_LLZO
     else:
         getMass_elements_cyl_elyte.Li_mass = 1
     return getMass_elements_cyl_elyte.Li_mass
+
+def getMass_elements_pouch_separator_solid(Electrolyte_solid,Separator, Pouch):
+    #
+    if Electrolyte_solid.salt == "LLZO":
+        Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
+        getMass_elements_pouch_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Pouch.jr_area * 1.05) * Li_mass_content_LLZO
+    else:
+        getMass_elements_pouch_separator_solid.Li_mass = 1
+    return getMass_elements_pouch_separator_solid.Li_mass
 
 #######################
 #######################
@@ -859,6 +872,15 @@ def getMass_elements_pristmatic_elyte(Electrolyte_liquid, Separator, Prismatic):
     else:
         getMass_elements_cyl_elyte.Li_mass = 1
     return getMass_elements_cyl_elyte.Li_mass
+
+def getMass_elements_prismatic_separator_solid(Electrolyte_solid,Separator, Prismatic):
+    #
+    if Electrolyte_solid.salt == "LLZO":
+        Li_mass_content_LLZO = (Electrolyte_solid.index_Li * Electrolyte_solid.molarmass_Li) / Electrolyte_solid.molarmass_el  # 5.79 weight% of Li content in LLZO
+        getMass_elements_prismatic_separator_solid.Li_mass = Separator.thickness_sep * Separator.density_sep * (Prismatic.jr_area * 1.05) * Li_mass_content_LLZO
+    else:
+        getMass_elements_prismatic_separator_solid.Li_mass = 1
+    return getMass_elements_prismatic_separator_solid.Li_mass
 
 #######################
 #######################
